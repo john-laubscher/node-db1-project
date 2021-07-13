@@ -2,13 +2,6 @@ const router = require("express").Router();
 const Accounts = require("../accounts/accounts-model");
 
 router.get("/", (req, res, next) => {
-  //   try {
-  //     const allAccounts = await Accounts.getAll();
-  //     res.json(allAccounts);
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // });
   Accounts.getAll()
     .then((accounts) => {
       res.json(accounts);
@@ -16,12 +9,27 @@ router.get("/", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:id", (req, res, next) => {
-  // DO YOUR MAGIC
+router.get("/:id", async (req, res, next) => {
+  try {
+    const account = await Accounts.getById(req.params.id);
+    res.json(account);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.post("/", (req, res, next) => {
-  // DO YOUR MAGIC
+router.post("/", async (req, res, next) => {
+  try {
+    const name = req.body.name.trim();
+    const budget = req.body.budget.trim();
+    const newAccount = await Accounts.create({ name, budget });
+    res.status(201).json({
+      message: "Success! You have created a new account",
+      newAccount,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.put("/:id", (req, res, next) => {
